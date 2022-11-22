@@ -64,22 +64,23 @@ def create_cloud(folder, word_count):
     plt.axis("off")
     plt.margins(x=0, y=0)
     plt.show()
+    wordcloud.to_file('word_cloud.png')
 
 def evaluate_poem(folder, word_count): 
     poem_words = Counter(word_cloud(folder, word_count).words_.keys())
     themes = Counter(['love', 'gender', 'black', 'rise', 'today', 'sing', 'freedom', 'race', 'loss', 'struggle'])
-    terms = set(poem_words).union(themes)
-    #deal with this tomorrow - you're getting up at 8am
-    dotprod = sum(poem_words.get(k, 0) * themes.get(k, 0) for k in terms)
-    magA = math.sqrt(sum(poem_words.get(k, 0)**2 for k in terms))
-    magB = math.sqrt(sum(themes.get(k, 0)**2 for k in terms))
+    all_words = set(poem_words).union(themes)
+    
+    # adapted from: https://stackoverflow.com/questions/55162668/calculate-similarity-between-list-of-words
+    dotprod = sum(poem_words.get(value, 0) * themes.get(value, 0) for value in all_words)
+    magA = math.sqrt(sum(poem_words.get(value, 0)**2 for value in all_words))
+    magB = math.sqrt(sum(themes.get(value, 0)**2 for value in all_words))
     return round((dotprod / (magA * magB)) * 100)
 
-def main(): 
+def main(folder = "poem_database"): 
     num_words = int(input("How many words do you want shown in the world cloud? "))
-    folder = "poem_database"
     cosine_similarity = evaluate_poem(folder, num_words)
-    print("The word cloud shows", cosine_similarity, "cosine similarity between the themes of Maya Angelou's poems and the word cloud.")
+    print("The word cloud has", cosine_similarity, "cosine similarity with the themes of Maya Angelou's poems.")
     create_cloud(folder, num_words)
 
 if __name__ == "__main__":
