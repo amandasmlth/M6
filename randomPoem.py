@@ -4,7 +4,8 @@ from wordcloud import WordCloud
 from nltk.corpus import stopwords
 import matplotlib.pyplot as plt
 import pyttsx3
-import time
+from collections import Counter
+import math
 
 def return_words(poem): 
     poem_words = []
@@ -45,14 +46,16 @@ def word_cloud(folder, word_count):
                             background_color="black").generate(words)
     return wordcloud
 
-def plot_cloud(folder, word_count): 
+def create_cloud(folder, word_count): 
     wordcloud = word_cloud(folder, word_count)
 
     common_words = wordcloud.words_.keys()
     poem = ""
     for word in common_words:
-        poem = poem + "," + word
+        poem += word + "," 
+    
     converter = pyttsx3.init()
+    converter.setProperty('voice', 'com.apple.speech.synthesis.voice.samantha')
     converter.say(poem)
     converter.runAndWait()
 
@@ -62,10 +65,22 @@ def plot_cloud(folder, word_count):
     plt.margins(x=0, y=0)
     plt.show()
 
+def evaluate_poem(folder, word_count): 
+    poem_words = Counter(word_cloud(folder, word_count).words_.keys())
+    themes = Counter(['love', 'gender', 'black', 'rise', 'today', 'sing', 'freedom', 'race', 'loss', 'struggle'])
+    terms = set(poem_words).union(themes)
+    #deal with this tomorrow - you're getting up at 8am
+    dotprod = sum(poem_words.get(k, 0) * themes.get(k, 0) for k in terms)
+    magA = math.sqrt(sum(poem_words.get(k, 0)**2 for k in terms))
+    magB = math.sqrt(sum(themes.get(k, 0)**2 for k in terms))
+    return round((dotprod / (magA * magB)) * 100)
+
 def main(): 
-    num_words = 50 
+    num_words = int(input("How many words do you want shown in the world cloud? "))
     folder = "poem_database"
-    plot_cloud(folder, num_words)
+    cosine_similarity = evaluate_poem(folder, num_words)
+    print("The word cloud shows", cosine_similarity, "cosine similarity between the themes of Maya Angelou's poems and the word cloud.")
+    create_cloud(folder, num_words)
 
 if __name__ == "__main__":
     main()
