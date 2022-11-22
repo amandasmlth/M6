@@ -1,53 +1,71 @@
 import glob 
 import string
-import pandas as pd 
-import spacy
+from wordcloud import WordCloud
+from nltk.corpus import stopwords
+import matplotlib.pyplot as plt
+import pyttsx3
+import time
 
-def remove_punctuations(text):
-    for punctuation in string.punctuation:
-        text = text.replace(punctuation, '')
-        text = text.replace("\n", '')
-    return text
-
-def return_sentences(poem): 
+def return_words(poem): 
+    poem_words = []
+    words = []
     with open(poem,'r') as poem:
-        sentences = poem.readlines() #Adds lines from poem to list 
-        poem_data = pd.DataFrame(sentences, columns= ['unclean_sentences']) #Converts list to data frame 
-        
-        poem_data['sentences'] = poem_data['unclean_sentences'].apply(remove_punctuations)
-        poem_data = poem_data.drop(columns = ['unclean_sentences'])
+        poem_words = poem.read().split()
+        tokens = [word for word in poem_words if not word.lower() in stopwords.words()] #removes stop words from word bank  
+        for word in tokens: 
+            for character in string.punctuation:
+                word = word.replace(character, '')  
+            words.append(word.lower())
+    return words
 
-        return poem_data
-
-def create_data(folder): 
-    poem_data = pd.DataFrame(columns = ['sentences', 'poem_ID'])
-
+def read_poems(folder): 
+    #returns word bank from all the poems in our database 
+    word_bank = []
     path = folder
     poems = glob.glob(path + "/*.csv")
-
-    poem_ID = 0 
     for poem in poems: 
-        current_poem = return_sentences(poem) #temp dataframe that holds the current poem lines
-        rows = current_poem.shape[0]
-        total_rows = poem_data.shape[0]
-        new_num_rows = total_rows + rows
-        
-        poem_data = pd.concat([poem_data, current_poem])
+        word_bank.append(return_words(poem))
 
-        poem_data['poem_ID'].iloc[total_rows: new_num_rows] = poem_ID
-        poem_ID += 1 
+    return word_bank
 
-        column_names = ["poem_ID","sentences"]
-        poem_data = poem_data.reindex(columns=column_names)
-        poem_data.reset_index(drop=True, inplace=True) 
+def flatten_word_bank(folder):
+    word_bank = read_poems(folder) 
+    return [word for sublist in word_bank for word in sublist]
 
-        poem_data.to_csv("sentences_" + folder)
-
-poem_data = create_data(folder = 'poem_database')
-
-def write_poem(file, word, num_lines = 10): 
-    # Load the English model from SpaCy
-    nlp = spacy.load("en_core_web_lg")
-    starter = nlp(word)
+def word_cloud(folder, word_count): 
+    words = ""
+    word_bank = flatten_word_bank(folder)
     
- 
+    for word in word_bank: 
+        words = words + ' ' + word.replace("’", "")
+
+    wordcloud = WordCloud(width=3000, height=2000,
+                            colormap = 'Set2',
+                            max_words=word_count, 
+                            background_color="black").generate(words)
+    return wordcloud
+
+def plot_cloud(folder, word_count): 
+    wordcloud = word_cloud(folder, word_count)
+
+    common_words = wordcloud.words_.keys()
+    poem = ""
+    for word in common_words:
+        poem = poem + "," + word
+    converter = pyttsx3.init()
+    converter.say(poem)
+    converter.runAndWait()
+
+    plt.figure()
+    plt.imshow(wordcloud, interpolation="bilinear")
+    plt.axis("off")
+    plt.margins(x=0, y=0)
+    plt.show()
+
+def main(): 
+    num_words = 50 
+    folder = "poem_database"
+    plot_cloud(folder, num_words)
+
+if __name__ == "__main__":
+    main()
