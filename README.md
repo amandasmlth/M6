@@ -18,12 +18,10 @@ In your rubric, you mention "the system must: save its work so that it can re-pe
 Found this paper when scrolling through journal articles and this served as the inspiration for my entire poem generator system. Jin argued that word clouds allow people to understand the most essential words within some data set and are weighted visual representations of those intentions. 
 https://www.sciencedirect.com/science/article/pii/S1877705817302230
 
-(2) A Speech Recognized Dynamic Word Cloud Visualization for Text Summarization by Kayal Padmanandam, Sai Priya V D S Bheri, LaxmiHarshika Vegesna, and Kalakuntla Sruthi
-Paper talked about how word clouds are graphic representations of the words within some bank that have the highest frequency. Stopwords/filled words should be removed from your text corpus before creating the frequency map for the word cloud. 
+(2) A Speech Recognized Dynamic Word Cloud Visualization for Text Summarization by Kayal Padmanandam, Sai Priya V D S Bheri, LaxmiHarshika Vegesna, and Kalakuntla Sruthi. Padmanandam discussed how word clouds are graphic representations the most common words from an inspiring set and taught me the how word clouds are created and the purpose behind them. The paper noted that stopwords/filled words should be removed from your text corpus before creating the frequency map for the word cloud which was particularly helpful. 
 https://ieeexplore.ieee.org/abstract/document/9358693
 
-(3) Semantic Cosine Similarity by Faisal Rahutomo, Teruaki Kitasuka, and Masayoshi Aritsugi from the Graduate School of Science and Technology, Kumamoto University
-Taught me about semantic similarity between words and how you could then compute cosine similiarity between two word banks/lists which ended up being how my program evaluated itself. 
+(3) Semantic Cosine Similarity by Faisal Rahutomo, Teruaki Kitasuka, and Masayoshi Aritsugi from the Graduate School of Science and Technology, Kumamoto University. The following paper taught me about semantic similarity between words and casued me to think about how you can compute cosine similiarity between two word banks/lists which ended up being how my program evaluated itself. 
 https://www.researchgate.net/profile/Faisal-Rahutomo/publication/262525676_Semantic_Cosine_Similarity/links/0a85e537ee3b675c1e000000/Semantic-Cosine-Similarity.pdf
 
 # WORKS CITED
